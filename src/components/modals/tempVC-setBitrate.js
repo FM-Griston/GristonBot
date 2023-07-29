@@ -7,6 +7,7 @@ const textInput = new TextInputBuilder()
     .setCustomId(`setBitrateInput`)
     .setLabel(`Csatorna bitrátája:`)
     .setPlaceholder(`Alap: 64000; Min: 8000; Max: 96000`)
+    .setMaxLength(6)
     .setRequired(true)
     .setStyle(TextInputStyle.Short);
 
@@ -20,6 +21,8 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
         const serverBoostTier = interaction.guild.premiumTier;
         let getBitrateInput = interaction.fields.getTextInputValue("setBitrateInput");
+        getBitrateInput = parseInt(getBitrateInput);
+
         if (getBitrateInput < 8000) {
             getBitrateInput = 8000;
         } else if (getBitrateInput > 96000 && serverBoostTier === 0) {
@@ -30,16 +33,22 @@ module.exports = {
             getBitrateInput = 256000;
         } else if (getBitrateInput > 384000 && serverBoostTier === 3) {
             getBitrateInput = 384000;
-        } else {
+        } else if (getBitrateInput) {
             getBitrateInput = 64000;
         }
-        const { newVC } = require('../../events/client/tempVCmaker');
-        newVC.setBitrate(getBitrateInput)
-
-        await interaction.editReply({
-            content: `Csatorna bitrátája mostantól **${getBitrateInput}**!`,
-            ephemeral: true
-        });
+        
+        if (getBitrateInput !== NaN) {
+            interaction.channel.setBitrate(getBitrateInput)
+            await interaction.editReply({
+                content: `Csatorna bitrátája mostantól **${getBitrateInput}**!`,
+                ephemeral: true
+            });
+        } else {
+            await interaction.editReply({
+                content: `A bevitt érték nem egy szám!`,
+                ephemeral: true
+            });
+        }
     },
     setBitratemodal
 };

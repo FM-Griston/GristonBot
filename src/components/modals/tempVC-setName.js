@@ -18,8 +18,8 @@ module.exports = {
     },
     async execute(interaction, client) {
         await interaction.deferReply({ ephemeral: true });
-        const { newVC } = require('../../events/client/tempVCmaker');
-        newVC.setName(`${interaction.fields.getTextInputValue("setNameInput")}`);
+
+        interaction.channel.setName(`${interaction.fields.getTextInputValue("setNameInput")}`);
         
         await interaction.editReply({
             content: `Csatorna neve mostantól **${interaction.fields.getTextInputValue("setNameInput")}**!`,

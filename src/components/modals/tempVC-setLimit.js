@@ -6,7 +6,7 @@ const setLimitmodal = new ModalBuilder()
 const textInput = new TextInputBuilder()
     .setCustomId(`setLimitInput`)
     .setLabel(`Csatorna limite:`)
-    .setPlaceholder(`Írj 0-át, hogy megszüntesd a limitet!`)
+    .setPlaceholder(`Írj 0-át, hogy megszüntesd a limitet; Max: 99`)
     .setMaxLength(2)
     .setRequired(true)
     .setStyle(TextInputStyle.Short);
@@ -19,20 +19,25 @@ module.exports = {
     },
     async execute(interaction, client) {
         await interaction.deferReply({ ephemeral: true });
-        let getLimitInput = interaction.fields.getTextInputValue("setLimitInput");
+        let getLimitInput = interaction.fields.getTextInputValue('setLimitInput');
+        getLimitInput = parseInt(getLimitInput);
+
         if (getLimitInput < 0) {
             getLimitInput = 0
         };
-
-        const { newVC } = require('../../events/client/tempVCmaker');
-        newVC.setUserLimit(`${getLimitInput}`);
-        if (newVC.members.size != 1) {
-            console.log(newVC.members);
+        
+        if (getLimitInput !== NaN) {
+            interaction.channel.setUserLimit(`${getLimitInput}`);
+            await interaction.editReply({
+                content: `Csatorna taglimite mostantól **${getLimitInput}**!`,
+                ephemeral: true
+            });
+        } else {
+            await interaction.editReply({
+                content: `A bevitt érték nem egy szám!`,
+                ephemeral: true
+            })
         }
-        await interaction.editReply({
-            content: `Csatorna taglimite mostantól **${getLimitInput}**!`,
-            ephemeral: true
-        });
     },
     setLimitmodal
 };

@@ -10,4 +10,6 @@ const editorembed = new EmbedBuilder()
             name: "GreenBot"
         });
 
-module.exports = { editorembed };
+module.exports = {
+    editorembed 
+};

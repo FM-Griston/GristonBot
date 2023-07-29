@@ -23,13 +23,6 @@ module.exports = {
             const { customId } = interaction;
             const menu = selectMenus.get(customId);
             if (!menu) return new Error("Nincs kód erre a legördülő menüre!");
-
-            //try {
-            //    await menu.execute(interaction, client);
-            //} catch (error) {
-            //    console.error(error);
-            //}
-            //Pontosan nem tudom, hogy mit csinál ez a rész, szóval kikommentelem, mert minden egyes menüpont kiválasztása után logolja, hogy "menu.execute is not a function" - ettől függetlenül működnek a legördülő menük
         } else if (interaction.type == InteractionType.ModalSubmit) {
             const { modals } = client;
             const { customId } = interaction;
