@@ -26,17 +26,17 @@ module.exports = {
             getLimitInput = 0
         };
         
-        if (getLimitInput !== NaN) {
+        if (isNaN(getLimitInput)) {
+            await interaction.editReply({
+                content: `A bevitt érték nem egy szám!`,
+                ephemeral: true
+            })
+        } else {
             interaction.channel.setUserLimit(`${getLimitInput}`);
             await interaction.editReply({
                 content: `Csatorna taglimite mostantól **${getLimitInput}**!`,
                 ephemeral: true
             });
-        } else {
-            await interaction.editReply({
-                content: `A bevitt érték nem egy szám!`,
-                ephemeral: true
-            })
         }
     },
     setLimitmodal

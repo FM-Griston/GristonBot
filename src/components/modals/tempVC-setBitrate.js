@@ -36,16 +36,16 @@ module.exports = {
         } else if (getBitrateInput) {
             getBitrateInput = 64000;
         }
-        
-        if (getBitrateInput !== NaN) {
-            interaction.channel.setBitrate(getBitrateInput)
+
+        if (isNaN(getBitrateInput)) {
             await interaction.editReply({
-                content: `Csatorna bitrátája mostantól **${getBitrateInput}**!`,
+                content: `A bevitt érték nem egy szám!`,
                 ephemeral: true
             });
         } else {
+            interaction.channel.setBitrate(getBitrateInput)
             await interaction.editReply({
-                content: `A bevitt érték nem egy szám!`,
+                content: `Csatorna bitrátája mostantól **${getBitrateInput}**!`,
                 ephemeral: true
             });
         }
