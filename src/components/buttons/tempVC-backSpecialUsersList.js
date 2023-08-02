@@ -1,12 +1,12 @@
 const { ButtonBuilder, ButtonStyle } = require('discord.js')
-const backSpecialUserListButton = new ButtonBuilder()
-    .setCustomId(`backSpecialUserList`)
+const backSpecialUsersListButton = new ButtonBuilder()
+    .setCustomId(`backSpecialUsersList`)
     .setEmoji({ name: '◀️'})
     .setStyle(ButtonStyle.Primary);
 
 module.exports = {
     data: {
-        name: `backSpecialUserList`
+        name: `backSpecialUsersList`
     },
-    backSpecialUserListButton
+    backSpecialUsersListButton
 }

@@ -25,6 +25,12 @@ const permissionsEditormenu = new StringSelectMenuBuilder()
             value: `reject`
         }),
         new StringSelectMenuOptionBuilder({
+            label: `Kitörlés`,
+            description: `Egy szervertag kitörlése az engedélyezettek, vagy kitiltottak listájáról`,
+            emoji: {id: '1136314633993584702'},
+            value: `remove`
+        }),
+        new StringSelectMenuOptionBuilder({
             label: `Meghívás`,
             description: `Egy szervertag meghívása a csatornához`,
             emoji: {id: '1135537676108447796'},
