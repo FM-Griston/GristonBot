@@ -17,12 +17,11 @@ module.exports = (client) => {
         };
 
         const clientId = '1125419743235555358';
-        const guildId = '792786302638096446';
         const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
         try {
             console.log('Perjeles parancsok újratöltése...');
 
-            await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+            await rest.put(Routes.applicationCommands(clientId), {
                 body: client.commandArray,
             });
 
