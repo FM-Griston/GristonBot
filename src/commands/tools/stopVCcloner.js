@@ -35,7 +35,7 @@ module.exports = {
                     const voiceChannelClonerId = result[0].voiceChannelClonerId;
 
                     if (optionId === voiceChannelClonerId) {
-                        connection.query(`UPDATE GuildConfigurable SET voiceChannelCloners = JSON_REMOVE(voiceChannelCloners, '$[${i}]')`);
+                        connection.query(`UPDATE GuildConfigurable SET voiceChannelCloners = JSON_REMOVE(voiceChannelCloners, '$[${i}]') WHERE guildId = '${interaction.guild.id}'`);
                         haveResult = true;
 
                         return interaction.reply({

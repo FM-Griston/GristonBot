@@ -54,6 +54,11 @@ module.exports = {
                                     content: `Tedd a csatornát egy kategóriába!`,
                                     ephemeral: true
                                 });
+                            } else if (voiceChannelClonersLength > 10) {
+                                await interaction.reply({
+                                    content: `Maximum 10 hangcsatorna másoló lehet egy szerveren!`,
+                                    ephemeral: true
+                                });
                             } else {
                                 connection.query(`UPDATE GuildConfigurable SET voiceChannelCloners = JSON_SET(voiceChannelCloners, '$[${voiceChannelClonersLength}]', ${option.channel.id}) WHERE guildId = '${interaction.guild.id}'`);
         
