@@ -1,3 +1,6 @@
+![2023 Roadmap](https://github.com/FM-Griston/GristonBot/blob/main/GristonBot%20roadmap%202023.png?raw=true)
+
+
 # GreenBot
 Üdvözöllek, ez itt a GreenBot nevezetű Discord botom! A bot elkészítésével az volt a célom, hogy a VoiceMaster nevezetű közösségi bot prémium funkcióit, fizetés nélkül lehessen használni.
 
