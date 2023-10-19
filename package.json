@@ -1,13 +1,13 @@
 {
-  "name": "greenbot",
-  "version": "2.2.1",
+  "name": "gristonbot",
+  "version": "2.3.0",
   "description": "",
   "main": "src/bot.js",
   "scripts": {
     "test": "node ."
   },
   "keywords": [],
-  "author": "TEH Green",
+  "author": "FM Griston",
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^1.7.1",

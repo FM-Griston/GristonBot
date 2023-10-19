@@ -24,7 +24,17 @@ module.exports = {
             status: presenceOptions[0].status
         });
 
+        for (const embed of client.embeds) {
+            const anEmbed = embed[1].embed;
+            anEmbed.setAuthor({
+                iconURL: client.user.displayAvatarURL(),
+                name: client.user.username
+            });
+        };
         console.log(`${client.user.tag} sikeresen elindult!`);
+
+        setInterval(client.checkVideo, 1800 * 1000);
+        setInterval(client.checkStream, 30 * 1000);
     },
     presenceOptions
 };

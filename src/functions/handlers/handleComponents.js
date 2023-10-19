@@ -8,9 +8,16 @@ module.exports = (client) => {
                 file => file.endsWith('.js')
             );
             
-            const { selectMenus, modals, buttons } = client;
+            const { embeds, selectMenus, modals, buttons } = client;
 
             switch (folder) {
+                case "embeds": {
+                    for (const file of componentFiles) {
+                        const embed = require(`../../components/${folder}/${file}`);
+                        embeds.set(embed.data.name, embed);
+                    }
+                    break;
+                }
                 case "selectMenus": {
                     for (const file of componentFiles) {
                         const menu = require(`../../components/${folder}/${file}`);

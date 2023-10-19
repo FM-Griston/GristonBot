@@ -17,6 +17,7 @@ const client = new Client({
 });
 
 client.commands = new Collection();
+client.embeds = new Collection();
 client.selectMenus = new Collection();
 client.modals = new Collection();
 client.buttons = new Collection();
