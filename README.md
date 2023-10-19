@@ -1,8 +1,8 @@
 ![2023 Roadmap](https://github.com/FM-Griston/GristonBot/blob/main/GristonBot%20roadmap%202023.png?raw=true)
 
 
-# GreenBot
-Üdvözöllek, ez itt a GreenBot nevezetű Discord botom! A bot elkészítésével az volt a célom, hogy a VoiceMaster nevezetű közösségi bot prémium funkcióit, fizetés nélkül lehessen használni.
+# GristonBot
+Üdvözöllek, ez itt a GristonBot nevezetű Discord botom! A bot elkészítésével az volt a célom, hogy a VoiceMaster nevezetű közösségi bot prémium funkcióit, fizetés nélkül lehessen használni.
 
 ## Ideiglenes hangcsatorna készítés
 Ezzel a bottal létre lehet hozni saját hangcsatornákat egy adott hangcsatornához kapcsolódva. Ezt az ideiglenes hangcsatornát a felhasználó szabadon konfigurálhatja a boton keresztül!
