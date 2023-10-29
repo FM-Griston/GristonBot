@@ -27,6 +27,10 @@ module.exports = {
         .addStringOption(option => option
             .setName("tartalom")
             .setDescription("Mi legyen az értesítőben? (Új sor: \\n)")
+        )
+        .addStringOption(option => option
+            .setName("időlimit")
+            .setDescription("Mennyi idő teljen el legalább két értesítő között? (Másodpercben megadva!)")
         ),
     async autocomplete(interaction, client) {
         const focusedValue = interaction.options.getFocused();
@@ -40,14 +44,17 @@ module.exports = {
         );
     },
     async execute(interaction, client) {
+        await interaction.deferReply({ ephemeral: true });
+
         const optionPlatform = interaction.options.getString("platform").toLowerCase();
         const optionUserId = interaction.options.getString("azonosító");
         const optionChannel = interaction.options.get("csatorna");
         const optionContent = interaction.options.getString("tartalom");
+        const optionTimeLimit = parseInt(interaction.options.getString("időlimit"));
 
-        if (optionChannel.channel.type !== 0) {
-            return interaction.reply({
-                content: `${optionChannel} nem egy szöveges csatorna!`,
+        if (optionChannel.channel.type !== 0 && optionChannel.channel.type !== 5) {
+            return interaction.editReply({
+                content: `${optionChannel.id} nem egy szöveges csatorna!`,
                 ephemeral: true
             });
         }
@@ -69,7 +76,7 @@ module.exports = {
                 .then(response => response.json())
                 .then(response => {
                     if (response.error || !response.data[0]) {
-                        return interaction.reply({
+                        return interaction.editReply({
                             content: `Ismeretlen Twitch csatorna!`,
                             ephemeral: true
                         });
@@ -98,13 +105,21 @@ module.exports = {
                                 if (optionContent !== null) {
                                     connection.query(`UPDATE GuildNotifiers SET twitchMessage = '${optionContent}' WHERE guildId = '${interaction.guild.id}'`);
                                 };
+                                if (optionTimeLimit) {
+                                    connection.query(`UPDATE GuildNotifiers SET twitchTimeLimit = '${optionTimeLimit}' WHERE guildId = '${interaction.guild.id}'`);
+                                } else {
+                                    return interaction.editReply({
+                                        content: `Twitch értesítő **sikeresen beállítva**! Mivel nem számot adtál meg időlimitnek, ezért nincsen időlimit beállítva!`,
+                                        ephemeral: true
+                                    });
+                                };
                                 
-                                await interaction.reply({
+                                await interaction.editReply({
                                     content: `Twitch értesítő **sikeresen beállítva**!`,
                                     ephemeral: true
                                 });
                             } else {
-                                return interaction.reply({
+                                return interaction.editReply({
                                     content: "Már van Twitch beállítva értesítő ezen a szerveren! Ha szeretnéd törölni, akkor használd az `/editnotifier twitch delete` parancsot!",
                                     ephemeral: true
                                 });
@@ -118,7 +133,7 @@ module.exports = {
             .then(response => response.json())
             .then(response => {
                 if (response.error) {
-                    return interaction.reply({
+                    return interaction.editReply({
                         content: `Ismeretlen YouTube csatorna! Használd a csatorna azonosítóját!`,
                         ephemeral: true
                     });
@@ -145,12 +160,12 @@ module.exports = {
                             connection.query(`UPDATE GuildNotifiers SET youtubeMessage = '${optionContent}' WHERE guildId = '${interaction.guild.id}'`);
                         };
 
-                        await interaction.reply({
+                        await interaction.editReply({
                             content: `YouTube értesítő **sikeresen beállítva**!`,
                             ephemeral: true
                         });
                     } else {
-                        return interaction.reply({
+                        return interaction.editReply({
                             content: "Már van beállítva YouTube értesítő ezen a szerveren! Ha szeretnéd törölni, akkor használd az `/editnotifier youtube delete` parancsot!",
                             ephemeral: true
                         });
@@ -158,7 +173,7 @@ module.exports = {
                 })
             })
         } else {
-            return interaction.reply({
+            return interaction.editReply({
                 content: `Ismeretlen platform!`,
                 ephemeral: true
             });

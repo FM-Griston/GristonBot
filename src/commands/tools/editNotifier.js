@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, PermissionFlagsBits, ConnectionService } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, PermissionFlagsBits } = require('discord.js');
 const connection = require('../../connectToDB');
 
 module.exports = {
@@ -6,26 +6,34 @@ module.exports = {
         .setName("editnotifier")
         .setDescription("Egyik értesítő módosítása/törlése.")
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-        .addStringOption(option => option
-            .setName("platform")
-            .setDescription("Melyik értesítőt módosítsam/töröljem?")
-            .setAutocomplete(true)
-            .setRequired(true)
+        .addSubcommand(subcommand => subcommand
+            .setName("twitch")
+            .setDescription("Twitch értesítő módosítása.")
+            .addStringOption(option => option
+                .setName("twitch_opció")
+                .setDescription("Mit módosítsak az értesítőn?")
+                .setAutocomplete(true)
+                .setRequired(true)
+            ),
         )
-        .addStringOption(option => option
-            .setName("opció")
-            .setDescription("Mit módosítsak az értesítőn?")
-            .setAutocomplete(true)
-            .setRequired(true)
+        .addSubcommand(subcommand => subcommand
+            .setName("youtube")
+            .setDescription("YouTube értesítő módosítása.")
+            .addStringOption(option => option
+                .setName("youtube_opció")
+                .setDescription("Mit módosítsak az értesítőn?")
+                .setAutocomplete(true)
+                .setRequired(true)
+            ),
         ),
     async autocomplete(interaction) {
         const focusedOption = interaction.options.getFocused(true);
         let choices;
 
-        if (focusedOption.name === "platform") {
-            choices = ["Twitch", "YouTube"];
-        } else if (focusedOption.name === "opció") {
-            choices = ["törlés", "azonosító", "csatorna", "üzenet"];
+        if (focusedOption.name === "twitch_opció") {
+            choices = ["törlés", "azonosító", "csatorna", "üzenet", "időlimit"];
+        } else if (focusedOption.name === "youtube_opció") {
+            choices = ["törlés", "azonosító", "csatorna", "üzenet" ];    //subcommand?
         }
 
         const filtered = choices.filter(choice => choice.startsWith(focusedOption.value));
@@ -35,9 +43,9 @@ module.exports = {
     },
     
     async execute(interaction, client) {
-        const optionPlatform = interaction.options.getString("platform").toLowerCase();
-        const optionOption = interaction.options.getString("opció").toLowerCase();
-        module.exports = { optionPlatform };
+        const platform = interaction.options.getSubcommand();
+        const optionOption = interaction.options.getString(`${platform}_opció`).toLowerCase();
+        module.exports = { platform };
 
         connection.query(`SELECT twitchUserId, youtubeUserId FROM GuildNotifiers WHERE guildId = '${interaction.guild.id}'`, async function(error, result) {
             if (error) throw error;
@@ -45,17 +53,12 @@ module.exports = {
             const twitchUserId = result[0].twitchUserId;
             const youtubeUserId = result[0].youtubeUserId;
 
-            if (optionPlatform !== "twitch" && optionPlatform !== "youtube") {
-                return interaction.reply({
-                    content: `Ismeretlen platform!`,
-                    ephemeral: true
-                })
-            } else if (optionPlatform === "twitch" && twitchUserId === null) { 
+            if (platform === "twitch" && twitchUserId === null) { 
                 return interaction.reply({
                     content: `Nincs beállítva Twitch értesítő ezen a szerveren!`,
                     ephemeral: true
                 });
-            } else if (optionPlatform === "youtube" && youtubeUserId === null) {
+            } else if (platform === "youtube" && youtubeUserId === null) {
                 return interaction.reply({
                     content: `Nincs beállítva YouTube értesítő ezen a szerveren!`,
                     ephemeral: true
@@ -64,17 +67,19 @@ module.exports = {
 
             switch (optionOption) {
                 case "törlés": {
-                    if (optionPlatform === "twitch") {
-                        connection.query(`UPDATE GuildNotifiers SET twitchUserId = NULL, twitchChannelId = NULL, twitchMessage = NULL, twitchLastStreamStart = NULL WHERE guildId = '${interaction.guild.id}'`);
+                    await interaction.deferReply({ ephemeral: true });
+
+                    if (platform === "twitch") {
+                        connection.query(`UPDATE GuildNotifiers SET twitchUserId = NULL, twitchChannelId = NULL, twitchMessage = NULL, twitchLastStreamStart = NULL, lastTwitchNotification = NULL, twitchTimeLimit = 0 WHERE guildId = '${interaction.guild.id}'`);
     
-                        interaction.reply({
+                        interaction.editReply({
                             content: `Twitch értesítő **sikeresen törölve**!`,
                             ephemeral: true
                         });
                     } else {
                         connection.query(`UPDATE GuildNotifiers SET youtubeUserId = NULL, youtubeChannelId = NULL, youtubeMessage = NULL, youtubeLastVideoId = '[]' WHERE guildId = '${interaction.guild.id}'`);
                         
-                        interaction.reply({
+                        interaction.editReply({
                             content: `YouTube értesítő **sikeresen törölve**!`,
                             ephemeral: true
                         });
@@ -105,8 +110,6 @@ module.exports = {
                             const value = interaction.values[0];
                             
                             client.channels.fetch(value).then(selectedChannel => {
-                                console.log(selectedChannel)
-    
                                 if (selectedChannel.type !== 0) {
                                     return interaction.reply({
                                         content: `${selectedChannel} nem egy szöveges csatorna!`,
@@ -114,7 +117,7 @@ module.exports = {
                                     });
                                 }
 
-                                if (optionPlatform === "twitch") {
+                                if (platform === "twitch") {
                                     connection.query(`UPDATE GuildNotifiers SET twitchChannelId = '${selectedChannel.id}' WHERE guildId = '${interaction.guild.id}'`);
     
                                     interaction.reply({
@@ -140,6 +143,13 @@ module.exports = {
                     const setUserIdModal = client.modals.get('setNotifierMessage');
     
                     interaction.showModal(setUserIdModal.setNotifierMessagemodal);
+
+                    break;
+                }
+                case "időlimit": {
+                    const setNotifierTimeLimit = client.modals.get('setNotifierTimeLimit');
+
+                    interaction.showModal(setNotifierTimeLimit.setNotifierTimeLimitmodal);
 
                     break;
                 }

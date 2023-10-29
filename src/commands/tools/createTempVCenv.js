@@ -23,7 +23,7 @@ module.exports = {
                 });
             };
             
-            if(result[0].tempVCcategoryId === null && result[0].tempVCmakerId === null) {
+            if (result[0].tempVCcategoryId === null && result[0].tempVCmakerId === null) {
                 let categoryName = interaction.options.getString('kategórianév');
                 if (categoryName === null) {
                     categoryName = "Ideiglenes hangcsatornák"
