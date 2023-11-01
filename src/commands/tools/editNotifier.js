@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
 const connection = require('../../connectToDB');
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
         if (focusedOption.name === "twitch_opció") {
             choices = ["törlés", "azonosító", "csatorna", "üzenet", "időlimit"];
         } else if (focusedOption.name === "youtube_opció") {
-            choices = ["törlés", "azonosító", "csatorna", "üzenet" ];    //subcommand?
+            choices = ["törlés", "azonosító", "csatorna", "üzenet" ];
         }
 
         const filtered = choices.filter(choice => choice.startsWith(focusedOption.value));
@@ -96,6 +96,7 @@ module.exports = {
                 }
                 case "csatorna": {
                     const channelSelectMenu = client.selectMenus.get('channelSelectMenu').channelSelectMenu;
+                    channelSelectMenu.setChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement);
     
                     const channelSelectMenumsg = await interaction.reply({
                         content: `Válaszd ki a csatornát amelyre ezentúl küldjem az értesítőt!`,
@@ -110,13 +111,6 @@ module.exports = {
                             const value = interaction.values[0];
                             
                             client.channels.fetch(value).then(selectedChannel => {
-                                if (selectedChannel.type !== 0) {
-                                    return interaction.reply({
-                                        content: `${selectedChannel} nem egy szöveges csatorna!`,
-                                        ephemeral: true
-                                    });
-                                }
-
                                 if (platform === "twitch") {
                                     connection.query(`UPDATE GuildNotifiers SET twitchChannelId = '${selectedChannel.id}' WHERE guildId = '${interaction.guild.id}'`);
     

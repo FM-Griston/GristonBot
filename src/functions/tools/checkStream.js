@@ -66,21 +66,25 @@ module.exports = (client) => {
                                             const streamThumbnail = response.data[0].thumbnail_url
                                                 .replace("{width}", "1280")
                                                 .replace("{height}", "720");
-    
-                                            const notificationEmbed = new EmbedBuilder()
-                                                .setAuthor({ name: `${twitchUsername} éppen streamel!`, iconURL: userProfileImg})
-                                                .setTitle(streamTitle)
-                                                .setURL(`https://twitch.tv/${twitchUsername}`)
-                                                .addFields(
-                                                    { name: "Játék", value: streamGame, inline: true },
-                                                )
-                                                .setImage(streamThumbnail)
-                                                .setColor(clientColour);
-                                                
+                                            
                                             client.channels.fetch(twitchChannelId).then(twitchChannel =>
-                                                twitchChannel.send({
-                                                    content: twitchMessage,
-                                                    embeds: [notificationEmbed]
+                                                twitchChannel.send({files: [streamThumbnail]}).then(message => {
+                                                    const notificationEmbed = new EmbedBuilder()
+                                                        .setAuthor({ name: `${twitchUsername} éppen streamel!`, iconURL: userProfileImg})
+                                                        .setTitle(streamTitle)
+                                                        .setURL(`https://twitch.tv/${twitchUsername}`)
+                                                        .addFields(
+                                                            { name: "Játék", value: streamGame, inline: true },
+                                                        )
+                                                        .setImage(Array.from(message.attachments)[0][1].attachment)
+                                                        .setColor(clientColour);
+                                                    
+                                                    message.channel.send({
+                                                        content: twitchMessage,
+                                                        embeds: [notificationEmbed]
+                                                    });
+
+                                                    message.delete();
                                                 })
                                             ).catch(console.error);
                                             

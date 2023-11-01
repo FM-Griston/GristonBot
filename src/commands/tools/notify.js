@@ -1,5 +1,5 @@
 const { TWITCHCLIENTID, TWITCHCLIENTSECRET, YOUTUBEAPIKEY } = process.env;
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
 const connection = require('../../connectToDB');
 const fetch = require('node-fetch');
 
@@ -22,6 +22,7 @@ module.exports = {
         .addChannelOption(option => option
             .setName("csatorna")
             .setDescription("Melyik csatornára küldjem az értesítéseket?")
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
             .setRequired(true)    
         )
         .addStringOption(option => option
@@ -51,13 +52,6 @@ module.exports = {
         const optionChannel = interaction.options.get("csatorna");
         const optionContent = interaction.options.getString("tartalom");
         const optionTimeLimit = parseInt(interaction.options.getString("időlimit"));
-
-        if (optionChannel.channel.type !== 0 && optionChannel.channel.type !== 5) {
-            return interaction.editReply({
-                content: `${optionChannel.id} nem egy szöveges csatorna!`,
-                ephemeral: true
-            });
-        }
 
         if (optionPlatform === "twitch") {
             await fetch(`https://id.twitch.tv/oauth2/token?client_id=${TWITCHCLIENTID}&client_secret=${TWITCHCLIENTSECRET}&grant_type=client_credentials`, {

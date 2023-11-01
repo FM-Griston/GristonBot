@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
 const connection = require('../../connectToDB');
 
 module.exports = {
@@ -9,19 +9,13 @@ module.exports = {
         .addChannelOption(option => option
             .setName("csatorna")
             .setDescription("Melyik csatornát másoljam csatlakozáskor?")
+            .addChannelTypes(ChannelType.GuildVoice)
             .setRequired(true)
         ),
     async execute(interaction, client) {
         const option = interaction.options.get('csatorna');
         const optionId = option.channel.id;
         let haveResult = false;
-        
-        if (option.channel.type !== 2) {
-            return interaction.reply({
-                content: `<#${optionId}> nem egy hangcsatorna!`,
-                ephemeral: true
-            });
-        };
        
         connection.query(`SELECT JSON_LENGTH(voiceChannelCloners) AS voiceChannelClonersLength, tempVCmakerId FROM GuildConfigurable WHERE guildId = '${interaction.guild.id}'`, async function(error, result) {
             if (error) throw error;
