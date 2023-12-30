@@ -70,7 +70,7 @@ module.exports = {
                     await interaction.deferReply({ ephemeral: true });
 
                     if (platform === "twitch") {
-                        connection.query(`UPDATE GuildNotifiers SET twitchUserId = NULL, twitchChannelId = NULL, twitchMessage = NULL, twitchLastStreamStart = NULL, lastTwitchNotification = NULL, twitchTimeLimit = 0 WHERE guildId = '${interaction.guild.id}'`);
+                        connection.query(`UPDATE GuildNotifiers SET twitchUserId = NULL, twitchChannelId = NULL, twitchMessage = NULL, twitchLastStreamStart = NULL, twitchTimeLimit = 0 WHERE guildId = '${interaction.guild.id}'`);
     
                         interaction.editReply({
                             content: `Twitch értesítő **sikeresen törölve**!`,

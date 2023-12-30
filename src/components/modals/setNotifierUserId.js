@@ -21,7 +21,7 @@ module.exports = {
         name: `setNotifierUserId`
     },
     async execute(interaction, client) {
-        const platform = require('../../commands/tools/editNotifier').optionPlatform;
+        const platform = require('../../commands/tools/editNotifier').platform;
 
         if (platform === "twitch") {
             const twitchUsernameInput = interaction.fields.getTextInputValue("setNotifierUserIdInput");

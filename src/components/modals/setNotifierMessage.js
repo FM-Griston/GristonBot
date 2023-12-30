@@ -9,7 +9,7 @@ const textInput = new TextInputBuilder()
     .setCustomId(`setMessageInput`)
     .setLabel(`Üzenet:`)
     .setMaxLength(1500)
-    .setRequired(true)
+    .setRequired(false)
     .setStyle(TextInputStyle.Paragraph);
 
 setNotifierMessagemodal.addComponents(new ActionRowBuilder().addComponents(textInput));
@@ -20,7 +20,7 @@ module.exports = {
     },
     async execute(interaction, client) {
         const setMessageInput = interaction.fields.getTextInputValue("setMessageInput");
-        const platform = require('../../commands/tools/editNotifier').optionPlatform;
+        const platform = require('../../commands/tools/editNotifier').platform;
 
         if (platform === "twitch") {
             connection.query(`UPDATE GuildNotifiers SET twitchMessage = '${setMessageInput}' WHERE guildId = '${interaction.guild.id}'`);

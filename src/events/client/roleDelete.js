@@ -6,7 +6,9 @@ module.exports = {
         connection.query(`SELECT roleGivenToIdlesId FROM GuildConfigurable WHERE guildId = '${role.guild.id}'`, async function (error, result) {
             if (error) throw error;
 
-            if (result[0].roleGivenToIdlesId === role.id) {
+            const roleGivenToIdlesId = result[0].roleGivenToIdlesId;
+
+            if (roleGivenToIdlesId !== null && roleGivenToIdlesId === role.id) {
                 connection.query(`UPDATE GuildConfigurable SET roleGivenToIdlesId = NULL WHERE guildId = '${role.guild.id}'`);
                 connection.query(`UPDATE GuildConfigurable SET giveRoleToIdles = 0 WHERE guildId = '${role.guild.id}'`);
             };

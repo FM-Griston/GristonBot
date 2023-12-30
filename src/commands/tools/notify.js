@@ -99,11 +99,11 @@ module.exports = {
                                 if (optionContent !== null) {
                                     connection.query(`UPDATE GuildNotifiers SET twitchMessage = '${optionContent}' WHERE guildId = '${interaction.guild.id}'`);
                                 };
-                                if (optionTimeLimit) {
+                                if (optionTimeLimit && optionTimeLimit < 100000) {
                                     connection.query(`UPDATE GuildNotifiers SET twitchTimeLimit = '${optionTimeLimit}' WHERE guildId = '${interaction.guild.id}'`);
-                                } else {
+                                } else if (optionTimeLimit) {
                                     return interaction.editReply({
-                                        content: `Twitch értesítő **sikeresen beállítva**! Mivel nem számot adtál meg időlimitnek, ezért nincsen időlimit beállítva!`,
+                                        content: `Twitch értesítő **sikeresen beállítva**! Mivel túl nagy számot (maximum 99 999 másodperc), vagy nem számot adtál meg időlimitnek, ezért nincsen időlimit beállítva!`,
                                         ephemeral: true
                                     });
                                 };
